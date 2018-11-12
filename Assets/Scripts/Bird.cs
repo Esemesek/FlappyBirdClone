@@ -4,8 +4,14 @@ using UnityEngine;
 
 public class Bird : MonoBehaviour {
 
-    public float upForce = 200f;
+    public float upForce = 400f;
+    public int rotationSpeed = 4;
+    public int rotationDelay = 24;
+    public int minAngle = -90;
+    public int maxAngle = 30;
 
+    private int delay = 0;
+    private int rotation = 0;
     private bool isDead = false;
     private Rigidbody2D rb2d;
     private Animator animator;
@@ -23,7 +29,20 @@ public class Bird : MonoBehaviour {
                 rb2d.velocity = Vector2.zero;
                 rb2d.AddForce(new Vector2(0, upForce));
                 animator.SetTrigger("Flap");
+                
+                // Rotation
+                rotation = maxAngle;
+                delay = rotationDelay;
+            } else if (rotation > minAngle && delay == 0) {
+                rotation -= rotationSpeed;
             }
+ 
+            // Delay rotation of bird after 'Flap'
+            if (delay > 0) {
+                delay--;
+            }
+ 
+            rb2d.MoveRotation(rotation);
         }
 	}
 

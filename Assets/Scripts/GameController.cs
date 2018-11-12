@@ -10,7 +10,7 @@ public class GameController : MonoBehaviour {
     public GameObject gameOverText;
     public Text scoreText;
     public bool gameOver = false;
-    public float scrollSpeed = -1.5f;
+    public float scrollSpeed = -3f;
 
     private int score = 0;
 

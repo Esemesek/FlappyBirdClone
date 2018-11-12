@@ -5,10 +5,10 @@ using UnityEngine;
 public class ColumnPool : MonoBehaviour {
 
     public int columnPoolSize = 5;
+    public float spawnRate = 1.2f;
+    public float columnMin = -2.5f;
+    public float columnMax = 2.3f;
     public GameObject columnPrefab;
-    public float spawnRate = 3f;
-    public float columnMin = -3f;
-    public float columnMax = 2.5f;
 
     private GameObject[] columns;
     private Vector2 objectPoolPosition = new Vector2(-15f, -25f);

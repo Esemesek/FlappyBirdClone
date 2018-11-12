@@ -627,7 +627,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 2.5
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
@@ -686,8 +686,8 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 998694684}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: -0.026, y: 0.09, z: 0}
+  m_LocalScale: {x: 0.8476561, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 1
@@ -742,7 +742,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9bf7e1c140bca54abd09ddd90937977, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  upForce: 200
+  upForce: 400
+  rotationSpeed: 4
+  rotationDelay: 24
+  minAngle: -90
+  maxAngle: 30
 --- !u!95 &998694690
 Animator:
   serializedVersion: 3
@@ -882,7 +886,7 @@ MonoBehaviour:
   gameOverText: {fileID: 923967063}
   scoreText: {fileID: 1015163978}
   gameOver: 0
-  scrollSpeed: -1.5
+  scrollSpeed: -3
 --- !u!4 &1124495717
 Transform:
   m_ObjectHideFlags: 0
@@ -908,11 +912,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   columnPoolSize: 5
-  columnPrefab: {fileID: 1154501346111732, guid: 35d13f0b98e16ee4c901d59b433aa7a5,
+  spawnRate: 1.2
+  columnMin: -2.5
+  columnMax: 2.3
+  columnPrefab: {fileID: 1841186022983946, guid: 35d13f0b98e16ee4c901d59b433aa7a5,
     type: 2}
-  spawnRate: 3
-  columnMin: -3
-  columnMax: 2.5
 --- !u!1 &1357157597
 GameObject:
   m_ObjectHideFlags: 0
