@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class ColumnPool : MonoBehaviour
 {
+
+
+    private BetterRandom betterRandom;
+
     public static ColumnPool instance;
     public int columnPoolSize = 7;
     public float spawnRate = 1.2f; //1.2f
@@ -21,6 +25,7 @@ public class ColumnPool : MonoBehaviour
 
     void Awake()
     {
+        betterRandom = new BetterRandom();
         if (instance == null)
         {
             instance = this;
@@ -58,7 +63,8 @@ public class ColumnPool : MonoBehaviour
         if (!GameController.instance.gameOver && timeSinceLastSpawned >= spawnRate)
         {
             timeSinceLastSpawned = 0;
-            float spawnYPosition = Random.Range(columnMin, columnMax);
+
+            float spawnYPosition = (float) betterRandom.Range(columnMin, columnMax);//Random.Range(columnMin, columnMax);
             columns[currentColumn].transform.position = new Vector2(spawnXPosition, spawnYPosition);
 
             currentColumn++;

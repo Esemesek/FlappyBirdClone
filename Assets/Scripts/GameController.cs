@@ -12,7 +12,7 @@ public class GameController : MonoBehaviour {
     public bool gameOver = false;
     public float scrollSpeed = -3f;
 
-    private int score = 0;
+    public int score = 0;
 
     public GameObject startPrefab;
     private GameObject start;

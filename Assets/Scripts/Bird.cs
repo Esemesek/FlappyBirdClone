@@ -17,12 +17,11 @@ public class Bird : MonoBehaviour {
 
     SimpleNeuralNetwork network = new SimpleNeuralNetwork(2);
 
-    private static double DEFAULT_DISTANCE = 12;
-
     GameObject[] goalObjects;
     Transform[] transforms;
     public Transform closestColumn;
     public double distance;
+    public double simpleDistance;
 
     public double[] weights { get; set; }
     
@@ -67,18 +66,33 @@ public class Bird : MonoBehaviour {
 
             UpdateDistanceMeasure();
 
-            network.PushInputValues(new double[] { (transform.position.y - closestColumn.position.y) + 0.8f, distance});
+            //w gore 5.4
+            //w dol -2.685
+
+            //miedzy kolumnami 3.66
+            
+            double yDistance = (transform.position.y - closestColumn.position.y + 8.085f) / 16.17f;
+            double xDistance = 0;
+            if (GameController.instance.score > 0)
+                xDistance = distance / 8.875f;
+            else
+                xDistance = distance / 10.374f;
+            
+            if (xDistance > 1)
+                xDistance = 1;
+
+
+
+            network.PushInputValues(new double[] {(1 - yDistance), xDistance*0});
             var outputs = network.GetOutput();
 
-            //Debug.Log("y: " + (transform.position.y - closestColumn.position.y));
-            //Debug.Log("x distance: " + distance);
+            //Debug.Log("y: " + yDistance);
+            //Debug.Log("x: " + xDistance);
             //Debug.Log("Output: " + outputs.First());
 
-            if (outputs.First() < 1)
+            if (outputs.First() == 1)
             {
-                Flap();
-                UpdateDistanceMeasure();
-              
+                Flap();              
             }
         }
     }
@@ -88,27 +102,35 @@ public class Bird : MonoBehaviour {
         goalObjects = GameObject.FindGameObjectsWithTag("MiddlePoint");
         transforms = goalObjects.Select(y => y.transform).ToArray();
         closestColumn = GetClosestColumn(transforms);
-        distance = GetDistanceBetweenColumnObjectAndBird(closestColumn);
+        //distance = GetDistanceBetweenColumnObjectAndBird(closestColumn);
+        distance = GetSqrtDistanceBetweenColumnObjectAndBird(closestColumn);
+        simpleDistance = GetDistanceBetweenColumnObjectAndBird(closestColumn);
     }
 
     public float GetBirdPosition()
     {
-        //float birdPosition = transform.position.x;
-        //if (birdPosition < 0)
-        //    birdPosition *= -1;
-        //return birdPosition;
         return GameController.instance.getStartObject().transform.position.x * -1 + transform.position.x;
     }
 
     private double GetDistanceBetweenColumnObjectAndBird(Transform objectTransform)
     {
-        //if (objectTransform == null) return DEFAULT_DISTANCE;
-        return (objectTransform.position.x * -1) - GetBirdPosition();
-        //return Mathf.Sqrt(
-        //        Mathf.Pow(objectTransform.position.y - transform.position.y, 2)
-        //        +
-        //        Mathf.Pow(objectTransform.position.x *-1 - GetBirdPosition(), 2)
-        //    );
+        double distance = objectTransform.position.x - transform.position.x;
+        if (distance < 0)
+            return 0;
+        else
+            return distance;
+    }
+
+    private double GetSqrtDistanceBetweenColumnObjectAndBird(Transform objectTransform)
+    {
+        float distance = objectTransform.position.x - transform.position.x;
+        if (distance < 0)
+            distance = 0;
+        return Mathf.Sqrt(
+                Mathf.Pow(objectTransform.position.y - transform.position.y, 2)
+                +
+                Mathf.Pow(distance, 2)
+            );
     }
 
     private Transform GetClosestColumn(Transform[] transforms)
@@ -139,7 +161,7 @@ public class Bird : MonoBehaviour {
         var layerFactory = new NeuralLayerFactory();
         network.AddLayer(layerFactory.CreateNeuralLayer(5, weights.Take(10).ToArray(), new StepActivationFunction(0.5),
                                                         new WeightedSumFunction()));
-        network.AddLayer(layerFactory.CreateNeuralLayer(1, weights.Skip(10).Take(5).ToArray(), new StepActivationFunction(0.5),
+        network.AddLayer(layerFactory.CreateNeuralLayer(1, weights.Skip(10).Take(5).ToArray(), new StepActivationFunction(0.5), //
                                                         new WeightedSumFunction()));
     }
 
@@ -161,6 +183,11 @@ public class Bird : MonoBehaviour {
 
 
         //GameController.instance.BirdDied();
+    }
+
+    public void SetAnimatorIdle()
+    {
+        animator.ResetTrigger("Die");
     }
    
 }

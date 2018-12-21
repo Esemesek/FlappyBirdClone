@@ -6,6 +6,7 @@ TagManager:
   tags:
   - MiddlePoint
   - Ground
+  - GeneticController
   layers:
   - Default
   - TransparentFX

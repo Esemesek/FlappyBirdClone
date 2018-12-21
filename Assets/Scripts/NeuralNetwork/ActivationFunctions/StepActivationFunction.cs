@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 public class StepActivationFunction : IActivationFunction
 {
@@ -11,7 +12,6 @@ public class StepActivationFunction : IActivationFunction
 
     public double CalculateOutput(double input)
     {
-        //Debug.Log("Output bez f: " + input);
         return Convert.ToDouble(input > _treshold);
     }
 }

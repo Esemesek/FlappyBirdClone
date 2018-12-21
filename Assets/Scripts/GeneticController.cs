@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GeneticController : MonoBehaviour {
 
@@ -8,15 +9,16 @@ public class GeneticController : MonoBehaviour {
     private GeneticAlgorithm<double> ga;
     int populationSize = 10;
     int dnaSize = 15;
-    float mutationRate = 0.02f;//0.05f;
-    int elitism = 5;
-    private System.Random random;
+    float mutationRate = 0.1f;//0.05f;
+    int elitism = 4;
 
-    public static float genMin = -20f;
-    public static float genMax = 20f;
+    public static float genMin = 0f;
+    public static float genMax = 2f;
 
     public GameObject birdPrefab;
     private GameObject[] birds;
+
+    private int first = 0;
 
     void Awake()
     {
@@ -33,8 +35,7 @@ public class GeneticController : MonoBehaviour {
     // Use this for initialization
     void Start () {
         ColumnPool.instance.InitFirstColumn();
-        random = new System.Random();
-        ga = new GeneticAlgorithm<double>(populationSize, dnaSize, random, GetRandomGen, FitnessFunction, elitism, mutationRate);
+        ga = new GeneticAlgorithm<double>(populationSize, dnaSize, GetRandomGen, FitnessFunction, elitism, mutationRate);
 
         GenerateBirds();
     }
@@ -52,8 +53,34 @@ public class GeneticController : MonoBehaviour {
         }
 		if(allDead)
         {
-            ga.NewGeneration();
+            if(GameController.instance.score == 0 && (first == 0 || first > 10) )
+            {
+                ga = new GeneticAlgorithm<double>(populationSize, dnaSize, GetRandomGen, FitnessFunction, elitism, mutationRate);
+                first = 1;
+            }
+            else
+            {
+                ga.NewGeneration();
+            }
+
+            if (GameController.instance.score == 0)
+            {
+                first++;
+            }
+            else
+            {
+                first = 1;
+            }
+
+
+
+
             GameController.instance.ResetLevel();
+            //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            //
+
+            Debug.Log("Nr populacji:" + ga.Generation);
+            
             for (int i = 0; i < populationSize; i++)
             {
                 birds[i].GetComponent<Bird>().UpdateWeights(ga.Population[i].Genes);
@@ -83,19 +110,18 @@ public class GeneticController : MonoBehaviour {
 
     private double GetRandomGen()
     {
-        return Random.Range(genMin, genMax);
+        BetterRandom random = new BetterRandom();
+        return random.Range(genMin, genMax);
+        //return Random.Range(genMin, genMax);
     }
 
     private float FitnessFunction(int index)
     {
         float score = 0;
 
-        score = birds[index].GetComponent<Bird>().GetBirdPosition();// - (float) birds[index].GetComponent<Bird>().distance;
-        //if (GameController.instance.lastScore != 0)
-        //    score *= GameController.instance.lastScore;
-        //else
-        //    score *= 0.5f;
-        //Debug.Log(score);
+        //score = birds[index].GetComponent<Bird>().GetBirdPosition() + (1 - (float) birds[index].GetComponent<Bird>().simpleDistance);
+        //if (score < 0)
+        score = birds[index].GetComponent<Bird>().GetBirdPosition();
         return score;
     }
 
@@ -106,6 +132,7 @@ public class GeneticController : MonoBehaviour {
         {
             birds[i].transform.position = orginalPosition;
             birds[i].GetComponent<Bird>().isDead = false;
+            birds[i].GetComponent<Bird>().SetAnimatorIdle();
         }
     }
 

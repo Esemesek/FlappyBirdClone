@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 public class SimpleNeuralNetwork
 {
@@ -118,9 +119,9 @@ public class SimpleNeuralNetwork
     {
         double[] weights = new double[numberOfInputNeurons];
         weights.ToList().ForEach(x => x = DEFAULT_INPUTS_WEIGHT);
-
-        var inputLayer = _layerFactory.CreateNeuralLayer(numberOfInputNeurons, 
-            weights, new RectifiedActivationFuncion(), new WeightedSumFunction());
+        
+        var inputLayer = _layerFactory.CreateNeuralLayer(numberOfInputNeurons,
+            weights, new WithoutActivationFunction(), new WeightedSumFunction());
         inputLayer.Neurons.ForEach(x => x.AddInputSynapse(0));
         this.AddLayer(inputLayer);
     }

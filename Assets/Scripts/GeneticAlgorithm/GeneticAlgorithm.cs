@@ -9,16 +9,18 @@ public class GeneticAlgorithm<T>
     public T[] BestGenes { get; private set; }
 
     public int Elitism;
-    public float MutationRate;
+    public float MutationRate { get; set; }
 
     private List<DNA<T>> newPopulation;
-    private Random random;
     private float fitnessSum;
     private int dnaSize;
     private Func<T> getRandomGene;
     private Func<int, float> fitnessFunction;
 
-    public GeneticAlgorithm(int populationSize, int dnaSize, Random random, Func<T> getRandomGene, Func<int, float> fitnessFunction,
+    private BetterRandom betterRandom;
+    
+
+    public GeneticAlgorithm(int populationSize, int dnaSize, Func<T> getRandomGene, Func<int, float> fitnessFunction,
         int elitism, float mutationRate = 0.01f)
     {
         Generation = 1;
@@ -26,16 +28,16 @@ public class GeneticAlgorithm<T>
         MutationRate = mutationRate;
         Population = new List<DNA<T>>(populationSize);
         newPopulation = new List<DNA<T>>(populationSize);
-        this.random = random;
         this.dnaSize = dnaSize;
         this.getRandomGene = getRandomGene;
         this.fitnessFunction = fitnessFunction;
+        betterRandom = new BetterRandom();
 
         BestGenes = new T[dnaSize];
 
         for (int i = 0; i < populationSize; i++)
         {
-            Population.Add(new DNA<T>(dnaSize, random, getRandomGene, fitnessFunction, shouldInitGenes: true));
+            Population.Add(new DNA<T>(dnaSize, getRandomGene, fitnessFunction, shouldInitGenes: true));
         }
     }
 
@@ -74,7 +76,7 @@ public class GeneticAlgorithm<T>
             }
             else
             {
-                newPopulation.Add(new DNA<T>(dnaSize, random, getRandomGene, fitnessFunction, shouldInitGenes: true));
+                newPopulation.Add(new DNA<T>(dnaSize, getRandomGene, fitnessFunction, shouldInitGenes: true));
             }
         }
 
@@ -122,7 +124,7 @@ public class GeneticAlgorithm<T>
 
     private DNA<T> ChooseParent()
     {
-        double randomNumber = random.NextDouble() * fitnessSum;
+        double randomNumber = betterRandom.NextDouble() * fitnessSum;
 
         for (int i = 0; i < Population.Count; i++)
         {
